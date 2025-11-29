@@ -23,5 +23,8 @@
         public float RestaurantTransactionCategoryPercent { get; }
 
         public float AverageMonthlyTravelCategoryTransactionAmountOverYear { get; }
+
+        public float AverageCashflowAtms { get; }
+            
     }
 }

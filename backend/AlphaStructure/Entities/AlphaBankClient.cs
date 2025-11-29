@@ -25,5 +25,7 @@ namespace AlphaOfferService.AlphaStructure.Entities
         public float RestaurantTransactionCategoryPercent { get; set; }
 
         public float AverageMonthlyTravelCategoryTransactionAmountOverYear { get; set; }
+
+        public float AverageCashflowAtms { get; set; }
     }
 }

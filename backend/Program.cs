@@ -1,6 +1,9 @@
 using AlphaOfferService.AlphaStructure.Clients;
 using AlphaOfferService.AlphaStructure.Entities;
+using AlphaOfferService.AlphaStructure.Entities.Suggestions.Income;
+using AlphaOfferService.AlphaStructure.Entities.Suggestions.Salary;
 using AlphaOfferService.AlphaStructure.Services;
+using AlphaOfferService.AlphaStructure.Services.Suggestions;
 using AlphaOfferService.Core;
 using AlphaOfferService.Middleware;
 using AlphaOfferService.Models;
@@ -36,15 +39,26 @@ namespace AlphaOfferService
                 builder.Services.AddSingleton<IIncomeModel>(new MarkModel(modelPath));
                 Log.Information("—оздана модель дл€ определени€ дохода клиента: {ModelPath}", modelPath);
 
-                var clientDbPath = Path.Combine(AppContext.BaseDirectory, "users.sqlite");
+                var clientDbPath = Path.Combine(AppContext.BaseDirectory, "alphabase.sqlite");
                 builder.Services.AddDbContext<AlphaBankRepository>(options =>
                     options.UseSqlite($"Data Source={clientDbPath}"));
                 builder.Services.AddScoped<IClientRepository, AlphaBankRepository>(provider =>
                     provider.GetRequiredService<AlphaBankRepository>());
+                builder.Services.AddScoped<ISuggestionsRepository<IncomeSuggestion>, AlphaBankRepository>(provider =>
+                    provider.GetRequiredService<AlphaBankRepository>());
+                builder.Services.AddScoped<ISuggestionsRepository<SalarySuggestion>, AlphaBankRepository>(provider =>
+                    provider.GetRequiredService<AlphaBankRepository>());
+                builder.Services.AddScoped<ISuggestionsRepository<CashflowAtmSuggestion>, AlphaBankRepository>(provider =>
+                    provider.GetRequiredService<AlphaBankRepository>());
+
                 Log.Information("ƒобавлена база данных: {DbPath}", clientDbPath);
 
-                builder.Services.AddScoped<AlphaBanRepositoryInitializer>();
+                builder.Services.AddScoped<AlphaBankRepositoryInitializer>();
+
                 builder.Services.AddScoped<IIncomeService, ModelIncomeService>();
+                builder.Services.AddScoped<ISuggestionService, IncomeSuggestionService>();
+                builder.Services.AddScoped<ISuggestionService, AverageSalarySuggestionService>();
+                builder.Services.AddScoped<ISuggestionService, CashflowAtmSuggestionService>();
 
                 builder.Services.AddControllers();
 
@@ -75,7 +89,7 @@ namespace AlphaOfferService
                 {
                     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
                     logger.LogInformation("Ќачата инициализаци€ базы данных клиентов");
-                    await scope.ServiceProvider.GetRequiredService<AlphaBanRepositoryInitializer>().InitializeDatabase();
+                    await scope.ServiceProvider.GetRequiredService<AlphaBankRepositoryInitializer>().InitializeDatabase();
                     logger.LogInformation("»нициализаци€ базы данных клиентов завершена");
                 }
 
