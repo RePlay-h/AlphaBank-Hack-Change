@@ -3,30 +3,34 @@ import { Input, Button, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import '../styles/profile-employee.scss';
 import { Loader } from '../components/UI';
+import { useFetching } from '../hooks/useFetching.ts';
+import clientService from '../api/clientService.ts';
 
 const ProfileEmployee = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
     const [series, setSeries] = useState('');
-    const [number, setNumber] = useState('');
+    const [clientId, setClientId] = useState('');
 
-    const mockClient = {
-        passportSeries: '1234',
-        passportNumber: '567890',
-    };
+    const [_, error, getIncome] = useFetching(async (clientId: string) => {
+        const response = await clientService.getClientIncome(clientId);
+        console.log(response);
+        return response;
+    });
 
-    const handlePassportSearch = () => {
-        if (
-            series === mockClient.passportSeries &&
-            number === mockClient.passportNumber
-        ) {
-            setLoading(true);
-            setTimeout(() => navigate('/client-profile'), 800);
-        } else {
-            setLoading(true);
-            setTimeout(() => setLoading(false), 800);
+    const handlePassportSearch = async () => {
+        setLoading(true);
+
+        const data = await getIncome(clientId);
+
+        if (error) {
+            console.log(error);
             message.error('Клиент не найден');
+        } else {
+            navigate('/client-profile', {
+                state: { clientData: data },
+            });
         }
     };
 
@@ -113,8 +117,8 @@ const ProfileEmployee = () => {
                     <Input
                         size='large'
                         placeholder='Номер паспорта'
-                        value={number}
-                        onChange={(e) => setNumber(e.target.value)}
+                        value={clientId}
+                        onChange={(e) => setClientId(e.target.value)}
                         className='profile-employee__input'
                         style={{
                             marginBottom: 24,
@@ -128,7 +132,7 @@ const ProfileEmployee = () => {
                         size='large'
                         className={'profile-employee__button'}
                         onClick={handlePassportSearch}
-                        disabled={!series || !number}
+                        disabled={!series || !clientId}
                     >
                         Найти клиента
                     </Button>
