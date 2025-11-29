@@ -37,9 +37,9 @@ namespace AlphaOfferService
                 Log.Information("Создана модель для определения дохода клиента: {ModelPath}", modelPath);
 
                 var clientDbPath = Path.Combine(AppContext.BaseDirectory, "users.sqlite");
-                builder.Services.AddDbContext<AlphaBankRepository>(options => 
+                builder.Services.AddDbContext<AlphaBankRepository>(options =>
                     options.UseSqlite($"Data Source={clientDbPath}"));
-                builder.Services.AddScoped<IClientRepository, AlphaBankRepository>(provider => 
+                builder.Services.AddScoped<IClientRepository, AlphaBankRepository>(provider =>
                     provider.GetRequiredService<AlphaBankRepository>());
                 Log.Information("Добавлена база данных: {DbPath}", clientDbPath);
 
