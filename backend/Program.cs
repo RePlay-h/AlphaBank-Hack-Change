@@ -1,6 +1,9 @@
 using AlphaOfferService.AlphaStructure.Clients;
 using AlphaOfferService.AlphaStructure.Entities;
+using AlphaOfferService.AlphaStructure.Entities.Suggestions.Income;
+using AlphaOfferService.AlphaStructure.Entities.Suggestions.Salary;
 using AlphaOfferService.AlphaStructure.Services;
+using AlphaOfferService.AlphaStructure.Services.Suggestions;
 using AlphaOfferService.Core;
 using AlphaOfferService.Middleware;
 using AlphaOfferService.Models;
@@ -18,7 +21,7 @@ namespace AlphaOfferService
                 .WriteTo.Console()
                 .CreateBootstrapLogger();
 
-            Log.Information("Запуск микро-сервиса AlphaOfferService");
+            Log.Information("Р—Р°РїСѓСЃРє РјРёРєСЂРѕ-СЃРµСЂРІРёСЃР° AlphaOfferService");
 
             try
             {
@@ -31,20 +34,31 @@ namespace AlphaOfferService
                     .Enrich.WithProperty("Environment", context.HostingEnvironment.EnvironmentName)
                 );
 
-                Log.Information("Начато создание модели для определения дохода клиента");
+                Log.Information("РќР°С‡Р°С‚Рѕ СЃРѕР·РґР°РЅРёРµ РјРѕРґРµР»Рё РґР»СЏ РѕРїСЂРµРґРµР»РµРЅРёСЏ РґРѕС…РѕРґР° РєР»РёРµРЅС‚Р°");
                 var modelPath = Path.Combine(AppContext.BaseDirectory, "model.onnx");
                 builder.Services.AddSingleton<IIncomeModel>(new MarkModel(modelPath));
-                Log.Information("Создана модель для определения дохода клиента: {ModelPath}", modelPath);
+                Log.Information("РЎРѕР·РґР°РЅР° РјРѕРґРµР»СЊ РґР»СЏ РѕРїСЂРµРґРµР»РµРЅРёСЏ РґРѕС…РѕРґР° РєР»РёРµРЅС‚Р°: {ModelPath}", modelPath);
 
-                var clientDbPath = Path.Combine(AppContext.BaseDirectory, "users.sqlite");
+                var clientDbPath = Path.Combine(AppContext.BaseDirectory, "alphabase.sqlite");
                 builder.Services.AddDbContext<AlphaBankRepository>(options =>
                     options.UseSqlite($"Data Source={clientDbPath}"));
                 builder.Services.AddScoped<IClientRepository, AlphaBankRepository>(provider =>
                     provider.GetRequiredService<AlphaBankRepository>());
-                Log.Information("Добавлена база данных: {DbPath}", clientDbPath);
+                builder.Services.AddScoped<ISuggestionsRepository<IncomeSuggestion>, AlphaBankRepository>(provider =>
+                    provider.GetRequiredService<AlphaBankRepository>());
+                builder.Services.AddScoped<ISuggestionsRepository<SalarySuggestion>, AlphaBankRepository>(provider =>
+                    provider.GetRequiredService<AlphaBankRepository>());
+                builder.Services.AddScoped<ISuggestionsRepository<CashflowAtmSuggestion>, AlphaBankRepository>(provider =>
+                    provider.GetRequiredService<AlphaBankRepository>());
 
-                builder.Services.AddScoped<AlphaBanRepositoryInitializer>();
+                Log.Information("Р”РѕР±Р°РІР»РµРЅР° Р±Р°Р·Р° РґР°РЅРЅС‹С…: {DbPath}", clientDbPath);
+
+                builder.Services.AddScoped<AlphaBankRepositoryInitializer>();
+
                 builder.Services.AddScoped<IIncomeService, ModelIncomeService>();
+                builder.Services.AddScoped<ISuggestionService, IncomeSuggestionService>();
+                builder.Services.AddScoped<ISuggestionService, AverageSalarySuggestionService>();
+                builder.Services.AddScoped<ISuggestionService, CashflowAtmSuggestionService>();
 
                 builder.Services.AddControllers();
 
@@ -74,17 +88,17 @@ namespace AlphaOfferService
                 using (var scope = app.Services.CreateScope())
                 {
                     var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
-                    logger.LogInformation("Начата инициализация базы данных клиентов");
-                    await scope.ServiceProvider.GetRequiredService<AlphaBanRepositoryInitializer>().InitializeDatabase();
-                    logger.LogInformation("Инициализация базы данных клиентов завершена");
+                    logger.LogInformation("РќР°С‡Р°С‚Р° РёРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Р±Р°Р·С‹ РґР°РЅРЅС‹С… РєР»РёРµРЅС‚РѕРІ");
+                    await scope.ServiceProvider.GetRequiredService<AlphaBankRepositoryInitializer>().InitializeDatabase();
+                    logger.LogInformation("РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ Р±Р°Р·С‹ РґР°РЅРЅС‹С… РєР»РёРµРЅС‚РѕРІ Р·Р°РІРµСЂС€РµРЅР°");
                 }
 
-                Log.Information("Микро-сервис AlphaOfferService успешно запущен!");
+                Log.Information("РњРёРєСЂРѕ-СЃРµСЂРІРёСЃ AlphaOfferService СѓСЃРїРµС€РЅРѕ Р·Р°РїСѓС‰РµРЅ!");
                 await app.RunAsync();
             }
             catch (Exception e)
             {
-                Log.Fatal(e, "Произошла ошбика при старте микро-сервиса AlphaOffer!");
+                Log.Fatal(e, "РџСЂРѕРёР·РѕС€Р»Р° РѕС€Р±РёРєР° РїСЂРё СЃС‚Р°СЂС‚Рµ РјРёРєСЂРѕ-СЃРµСЂРІРёСЃР° AlphaOffer!");
                 throw;
             }
             finally

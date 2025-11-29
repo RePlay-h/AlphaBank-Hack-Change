@@ -1,15 +1,15 @@
-﻿using AlphaOfferService.AlphaStructure.Entities;
+using AlphaOfferService.AlphaStructure.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace AlphaOfferService.AlphaStructure.Services
 {
-    public class AlphaBanRepositoryInitializer
+    public class AlphaBankRepositoryInitializer
     {
         private readonly AlphaBankRepository _repository;
 
-        private readonly ILogger<AlphaBanRepositoryInitializer> _logger;
+        private readonly ILogger<AlphaBankRepositoryInitializer> _logger;
 
-        public AlphaBanRepositoryInitializer(AlphaBankRepository repository, ILogger<AlphaBanRepositoryInitializer> logger)
+        public AlphaBankRepositoryInitializer(AlphaBankRepository repository, ILogger<AlphaBankRepositoryInitializer> logger)
         {
             _repository = repository;
             _logger = logger;

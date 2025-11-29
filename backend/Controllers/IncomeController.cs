@@ -1,11 +1,11 @@
-﻿using AlphaOfferService.AlphaStructure.Clients;
+using AlphaOfferService.AlphaStructure.Clients;
 using AlphaOfferService.Core;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AlphaOfferService.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("client/[controller]")]
     public class IncomeController : ControllerBase
     {
         private readonly IIncomeService _incomeService;
