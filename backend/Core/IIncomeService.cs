@@ -4,6 +4,6 @@ namespace AlphaOfferService.Core
 {
     public interface IIncomeService
     {
-        public Task<int> GetClientIncomeAsync(IClient client);
+        public Task<double> GetClientIncomeAsync(IClient client);
     }
 }

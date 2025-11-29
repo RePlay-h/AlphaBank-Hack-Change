@@ -12,7 +12,7 @@ namespace AlphaOfferService.Services
             _incomeModel = incomeModel;
         }
 
-        public async Task<int> GetClientIncomeAsync(IClient client)
+        public async Task<double> GetClientIncomeAsync(IClient client)
         {
             return await _incomeModel.CalculateClientIncome(client);
         }

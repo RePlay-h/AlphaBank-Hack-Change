@@ -4,6 +4,6 @@ namespace AlphaOfferService.Core
 {
     public interface IIncomeModel
     {
-        public Task<int> CalculateClientIncome(IClient client);
+        public Task<double> CalculateClientIncome(IClient client);
     }
 }
