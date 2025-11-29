@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import React from 'react';
 import AuthEmployee from '../pages/AuthEmployee.tsx';
 import ProfileEmployee from '../pages/ProfileEmployee.tsx';
+import { Layout } from '../components/UI';
 
 export const router = createBrowserRouter([
     {
@@ -16,7 +17,13 @@ export const router = createBrowserRouter([
         element: React.createElement(AuthEmployee),
     },
     {
-        path: '/profileEmployee',
-        element: React.createElement(ProfileEmployee),
+        path: '/',
+        element: React.createElement(Layout),
+        children: [
+            {
+                path: '/profileEmployee',
+                element: React.createElement(ProfileEmployee),
+            },
+        ],
     },
 ]);

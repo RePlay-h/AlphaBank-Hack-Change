@@ -44,7 +44,7 @@ const AuthEmployee = () => {
     }, []);
 
     return (
-        <div className='auth-employee container'>
+        <div className='auth-employee'>
             {loading && <Loader />}
             <div className='auth-employee__logo'>
                 <Logo height={80} width={40} />
