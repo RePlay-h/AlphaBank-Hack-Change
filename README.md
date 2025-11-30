@@ -81,12 +81,15 @@ Backend-сервис:
 - axios 1.13.2
 - sass 1.94.2
 
+##backend
+- catboost library
+
 # Для фронтенда
 sudo apt update && sudo apt upgrade -y
 sudo apt install -y nodejs
 
 # 2. Запуск backend
-Разархивировать backend-win-x64.zip
+Разархивировать win-x64.zip
 Запустить AlphaOfferService
 
 # 3. Запуск frontend
